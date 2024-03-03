@@ -15,19 +15,19 @@ export default function CpmForm() {
       <Form>
         <FormField>
           <label>Nazwa zdarzenia: </label>
-          <input placeholder="Nazwa zdarzenia" />
+          <input placeholder="Nazwa zdarzenia" required/>
         </FormField>
         <FormField>
           <label>Czas trwania zdarzenia(dni):</label>
-          <Dropdown clearable options={options} selection/>
+          <Dropdown clearable options={options} selection required/>
         </FormField>
         <FormField>
           <label>Następstwo OD:</label>
-          <Dropdown clearable options={options} selection/>
+          <Dropdown clearable options={options} selection required/>
         </FormField>
         <FormField>
           <label>Następstwo DO:</label>
-          <Dropdown clearable options={options} selection/>
+          <Dropdown clearable options={options} selection required/>
         </FormField>
         <Button type="submit">Submit</Button>
       </Form>

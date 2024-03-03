@@ -7,7 +7,7 @@ import DataTable from "./ui/DataTable";
 function App() {
   return (
     <>
-      <Grid columns={2} divided textAlign="center">
+      <Grid columns={2} divided textAlign="center" padded="vertically">
         <GridRow>
           <Grid.Column width={5}>
             <CpmForm />
@@ -15,6 +15,9 @@ function App() {
           <Grid.Column width={10}>
             <DataTable />
           </Grid.Column>
+        </GridRow>
+        <GridRow>
+          {/* tu bedzie graf */}
         </GridRow>
       </Grid>
     </>
