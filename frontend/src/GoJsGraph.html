@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graph</title>
+    <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+
+    <script>
+      function init() {
+        var $ = go.GraphObject.make;
+        myDiagram = $(go.Diagram, "myDiagramDiv");
+        var nodeDataArray = [
+          { key: "A", es: "1", ls: "2", ls: "3", le: "4", color: "lime" },
+          { key: "B", color: "lime" },
+          { key: "C", color: "lime" },
+        ];
+        var linkDataArray = [
+          {
+            to: "B",
+            from: "A",
+          },
+          {
+            to: "C",
+            from: "B"
+          }
+        ];
+        myDiagram.model = new go.GraphLinksModel(nodeDataArray, linkDataArray);
+
+        myDiagram.nodeTemplate = $(
+          go.Node,
+          "Auto",
+          $(
+            go.Shape,
+            "RoundedRectangle",
+            { fill: "white" },
+            new go.Binding("fill", "color")
+          ),
+          $(go.TextBlock, "text", { margin: 20 }, new go.Binding("text", "key")),
+          $(go.TextBlock, "left", { margin: 20 }, new go.Binding("left", "le")),
+          
+
+        );
+
+        myDiagram.linkTemplate = $(
+          go.Link,
+          $(go.Shape, {strokeWidth: 3},
+            new go.Binding("stroke", "color")
+          ),
+          $(
+            go.Shape,
+            { toArrow: "Standard", stroke: null },
+            new go.Binding("fill", "color")
+          )
+        );
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <div
+      id="myDiagramDiv"
+      style="
+        width: 400px;
+        height: 300px;
+        border: 1px solid black;
+        background-color: white;
+      "
+    ></div>
+  </body>
+</html>
