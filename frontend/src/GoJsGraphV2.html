@@ -177,27 +177,6 @@
 
 <div id="sample">
   <div id="myDiagramDiv" style="border: 1px solid black; width: 100%; height: 400px; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0);"><canvas tabindex="0" width="1317" height="497" style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; touch-action: none; width: 1054px; height: 398px;"></canvas><div style="position: absolute; overflow: auto; width: 1054px; height: 398px; z-index: 1;"><div style="position: absolute; width: 1px; height: 1px;"></div></div></div>
-  <p>
-  This sample demonstrates how to create a simple PERT chart. A PERT chart is a project management tool used to schedule and coordinate tasks within a project.
-  </p>
-  <p>
-  Each node represents an activity and displays several pieces of information about each one.
-  The node template is basically a <a href="../api/symbols/Panel.html" target="api">Panel</a> of type <a href="../api/symbols/Panel.html#static-Table" target="api">Panel.Table</a> holding several <a href="../api/symbols/TextBlock.html" target="api">TextBlock</a>s
-  that are data-bound to properties of the Activity, all surrounded by a rectangular border.
-  The lines separating the text are implemented by setting the <a href="../api/symbols/RowColumnDefinition.html#separatorStroke" target="api">RowColumnDefinition.separatorStroke</a>
-  for two columns and two rows. The separators are not seen in the middle because the middle row
-  of each node has its <a href="../api/symbols/RowColumnDefinition.html#background" target="api">RowColumnDefinition.background</a> set to white,
-  and <a href="../api/symbols/RowColumnDefinition.html#coversSeparators" target="api">RowColumnDefinition.coversSeparators</a> set to true.
-  </p>
-  <p>
-  The "critical" property on the activity data object controls whether the node is drawn with a red brush or a blue one.
-  There is a special converter that is used to determine the brush used by the links.
-  </p>
-  <p>
-  The light blue legend is implemented by a separate Part implemented in a manner similar to the Node template.
-  However it is not bound to data -- there is no JavaScript object in the model representing the legend.
-  </p>
-<p class="text-xs">GoJS version 2.3.14. Copyright 1998-2023 by Northwoods Software.</p></div>
-    <p><a href="https://github.com/NorthwoodsSoftware/GoJS/blob/master/samples/PERT.html" target="_blank">View this sample page's source on GitHub</a></p></div>
+  </div>
   </body>
   </html>

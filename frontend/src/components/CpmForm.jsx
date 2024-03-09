@@ -52,7 +52,7 @@ export default function CpmForm({ addRowToTable }) {
             {...register("to", { pattern: { value: /^\d+$/ } })}
           />
         </FormField>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" inverted color="red">Submit</Button>
       </Form>
     </>
   );
