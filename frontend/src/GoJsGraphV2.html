@@ -38,48 +38,36 @@
       // Some information is not available as properties on the node data,
       // but must be computed -- we use converter functions for that.
       myDiagram.nodeTemplate =
-        $(go.Node, "Auto",
-          $(go.Shape, "Rectangle",  // the border
-            { fill: "white", strokeWidth: 2 },
-            new go.Binding("fill", "critical", b => b ? pinkfill : bluefill),
-            new go.Binding("stroke", "critical", b => b ? pink : blue)),
-          $(go.Panel, "Table",
-            { padding: 0.5 },
-            $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
-            $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
-            $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: "white", coversSeparators: true }),
-            $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-            $(go.TextBlock, // earlyStart
-              new go.Binding("text", "earlyStart"),
-              { row: 0, column: 0, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,
-              new go.Binding("text", "length"),
-              { row: 0, column: 1, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,  // earlyFinish
-              new go.Binding("text", "",
-                d => (d.earlyStart + d.length).toFixed(2)),
-              { row: 0, column: 2, margin: 5, textAlign: "center" }),
+  $(go.Node, "Auto",
+    $(go.Shape, "Rectangle",  // the border
+      { fill: "white", strokeWidth: 2 },
+      new go.Binding("fill", "critical", b => b ? pinkfill : bluefill),
+      new go.Binding("stroke", "critical", b => b ? pink : blue)),
+    $(go.Panel, "Table",
+      { padding: 0.5 },
+      $(go.RowColumnDefinition, { column: 1 }),
+      $(go.RowColumnDefinition, { column: 2 }),
+      $(go.RowColumnDefinition, { row: 1, background: "white", coversSeparators: true }),
+      $(go.RowColumnDefinition, { row: 2 }),
 
-            $(go.TextBlock,
-              new go.Binding("text", "text"),
-              {
-                row: 1, column: 0, columnSpan: 3, margin: 5,
-                textAlign: "center", font: "bold 14px sans-serif"
-              }),
+      $(go.TextBlock, // key
+        new go.Binding("text", "key"),
+        { row: 0, column: 0, columnSpan: 3, margin: 5, textAlign: "center", font: "bold 14px sans-serif" }),
 
-            $(go.TextBlock,  // lateStart
-              new go.Binding("text", "",
-                d => (d.lateFinish - d.length).toFixed(2)),
-              { row: 2, column: 0, margin: 5, textAlign: "center" }),
-            $(go.TextBlock,  // slack
-              new go.Binding("text", "",
-                d => (d.lateFinish - (d.earlyStart + d.length)).toFixed(2)),
-              { row: 2, column: 1, margin: 5, textAlign: "center" }),
-            $(go.TextBlock, // lateFinish
-              new go.Binding("text", "lateFinish"),
-              { row: 2, column: 2, margin: 5, textAlign: "center" })
-          )  // end Table Panel
-        );  // end Node
+      $(go.TextBlock, // earlyStart
+        new go.Binding("text", "earlyStart"),
+        { row: 1, column: 0, margin: 5, textAlign: "center" }),
+      $(go.TextBlock, // earlyFinish
+        new go.Binding("text", "",
+          d => (d.earlyStart + d.length).toFixed(2)),
+        { row: 1, column: 2, margin: 5, textAlign: "center" }),
+
+      $(go.TextBlock,  // Slack
+        new go.Binding("text", "",
+          d => (d.lateFinish - (d.earlyStart + d.length)).toFixed(2)),
+        { row: 2, column: 1, margin: 5, textAlign: "center" })
+    )  // end Table Panel
+  );  // end Node
 
       // The link data object does not have direct access to both nodes
       // (although it does have references to their keys: .from and .to).
@@ -104,15 +92,24 @@
       // connected nodes have data that is ".critical"; otherwise it is blue.
       // This is computed by the binding converter function.
       myDiagram.linkTemplate =
-        $(go.Link,
-          { toShortLength: 6, toEndSegmentLength: 20 },
-          $(go.Shape,
-            { strokeWidth: 4 },
-            new go.Binding("stroke", "", linkColorConverter)),
-          $(go.Shape,  // arrowhead
-            { toArrow: "Triangle", stroke: null, scale: 1.5 },
-            new go.Binding("fill", "", linkColorConverter))
-        );
+  $(go.Link,
+    { toShortLength: 6, toEndSegmentLength: 20 },
+    $(go.Shape,
+      { strokeWidth: 4 },
+      new go.Binding("stroke", "", linkColorConverter)),
+    $(go.Shape,  // arrowhead
+      { toArrow: "Triangle", stroke: null, scale: 1.5 },
+      new go.Binding("fill", "", linkColorConverter)),
+    $(go.TextBlock, // text value
+      { segmentIndex: -1, segmentOffset: new go.Point(0.5, -10), textAlign: "center", font: "bold 12px sans-serif" },
+      new go.Binding("text", "", function(linkData) {
+        var fromNode = myDiagram.findNodeForKey(linkData.from);
+        var text = fromNode.data.text;
+        return text;
+      }))
+  );
+
+
 
       // here's the data defining the graph
       var nodeDataArray = [
