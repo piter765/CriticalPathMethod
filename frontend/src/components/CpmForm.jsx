@@ -21,9 +21,9 @@ export default function CpmForm({ addRowToTable }) {
       </Header>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormField>
-          <label>Nazwa zdarzenia: </label>
+          <label>Nazwa czynności: </label>
           <input
-            placeholder="Nazwa zdarzenia"
+            placeholder="Nazwa czynności"
             required
             {...register("name", { pattern: { value: /^[a-zA-Z]+$/ } })}
           />
@@ -52,7 +52,7 @@ export default function CpmForm({ addRowToTable }) {
             {...register("to", { pattern: { value: /^\d+$/ } })}
           />
         </FormField>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" inverted color="red">Submit</Button>
       </Form>
     </>
   );
