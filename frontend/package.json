@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "d3": "^5.5.0",
+    "gojs": "^2.3.14",
+    "gojs-react": "^1.1.2",
     "react": "^16.4.1",
     "react-d3-graph": "^2.6.0",
     "react-dom": "^16.4.1",
