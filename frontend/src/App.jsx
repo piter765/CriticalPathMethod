@@ -112,16 +112,16 @@ let nodeDataArrayTest = [
   },
 ];
 let linkDataArrayTest = [
-  { from: 1, to: 2, length: 3, name: "A" },
-  { from: 2, to: 3, length: 4, name: "B" },
-  { from: 2, to: 4, length: 6, name: "C" },
-  { from: 3, to: 5, length: 7, name: "D" },
-  { from: 5, to: 7, length: 1, name: "E" },
-  { from: 4, to: 7, length: 2, name: "F" },
-  { from: 4, to: 6, length: 3, name: "G" },
-  { from: 6, to: 7, length: 4, name: "H" },
-  { from: 7, to: 8, length: 1, name: "I" },
-  { from: 8, to: 9, length: 2, name: "J" },
+  { from: 1, to: 2, length: 3, name: "A", critical: false },
+  { from: 2, to: 3, length: 4, name: "B", critical: false },
+  { from: 2, to: 4, length: 6, name: "C", critical: false },
+  { from: 3, to: 5, length: 7, name: "D", critical: false },
+  { from: 5, to: 7, length: 1, name: "E", critical: false },
+  { from: 4, to: 7, length: 2, name: "F", critical: false },
+  { from: 4, to: 6, length: 3, name: "G", critical: false },
+  { from: 6, to: 7, length: 4, name: "H", critical: false },
+  { from: 7, to: 8, length: 1, name: "I", critical: false },
+  { from: 8, to: 9, length: 2, name: "J", critical: false },
 ];
 
 function App() {
@@ -162,6 +162,7 @@ function App() {
     setLinkDataArray((prevLinkDataArray) => [
       ...prevLinkDataArray,
       {
+        name: rowData.name,
         from: parseInt(rowData.from),
         to: parseInt(rowData.to),
         length: parseInt(rowData.duration),
@@ -237,21 +238,22 @@ function App() {
 
   const calculateEarlyFinish = () => {
     for (let i = nodeDataArray.length - 1; i >= 0; i--) {
-      if ( nodeDataArray[i].successors.length == 0) {
+      if (nodeDataArray[i].successors.length == 0) {
         // For  nodeDataArray[i]s with no successors, set earlyFinish to the same value as earlyStart
-         nodeDataArray[i].earlyFinish =  nodeDataArray[i].earlyStart;
+        nodeDataArray[i].earlyFinish = nodeDataArray[i].earlyStart;
       } else {
         // For  nodeDataArray[i]s with successors, calculate the earlyFinish
         let min = Number.MAX_SAFE_INTEGER;
-        for (let successorKey of  nodeDataArray[i].successors) {
+        for (let successorKey of nodeDataArray[i].successors) {
           const link = linkDataArray.find(
-            (link) => link.from ===  nodeDataArray[i].key && link.to === successorKey
+            (link) =>
+              link.from === nodeDataArray[i].key && link.to === successorKey
           );
           if (!link) continue;
 
           // Calculate earlyFinish based on the successor's earlyFinish and link duration
-          const successor =  nodeDataArray.find(
-            (node) =>  node.key === successorKey
+          const successor = nodeDataArray.find(
+            (node) => node.key === successorKey
           );
           const earlyFinishSuccessor = successor.earlyFinish;
           const earlyFinish = earlyFinishSuccessor - link.length;
@@ -260,7 +262,7 @@ function App() {
             min = earlyFinish;
           }
         }
-         nodeDataArray[i].earlyFinish = min;
+        nodeDataArray[i].earlyFinish = min;
       }
       calculateReserve(nodeDataArray[i]);
     }
@@ -269,16 +271,81 @@ function App() {
   };
 
   const calculateReserve = (node) => {
-    node.reserve = node.earlyStart - node.earlyFinish;
-    if (node.reserve === 0) {
-      node.critical = true;
+    node.reserve = node.earlyFinish - node.earlyStart;
+  };
+
+  let paths = [];
+  let path = [];
+  const findPaths = (node) => {
+    if (node.reserve == 0) {
+      path.push(node.key);
+
+      for (const key of node.successors) {
+        const successor = nodeDataArray.find((n) => n.key == key); // dont know if this is ok because is the last array element with the biggest key?
+        findPaths(successor);
+
+        let index = path.indexOf(node.key);
+        if (index !== -1) {
+          path = path.slice(0, index + 1); // include the found element
+          if (key == nodeDataArray[nodeDataArray.length - 1].key) {
+            paths.push([...path, key]);
+          }
+        } else {
+          console.log("Element not found in the array.");
+        }
+      }
     }
-  }
+  };
+
+  const calculateCriticalPath = () => {
+    if (paths.length == 0) return;
+    let longestPath = paths[0].length;
+
+    for (let i = 1; i < paths.length; i++) {
+      if (paths[i].length > longestPath) {
+        longestPath = paths[i].length;
+      }
+    }
+
+    //throw away paths that are shorter and the only ones left are potential critical paths
+    paths = paths.filter((path) => path.length === longestPath);
+
+    let highestSum = 0,
+      indexOfHighestSum = 0;
+    if (paths.length !== 1) {
+      for (let j = 0; j < paths.length - 1; j++) {
+        let sum = 0;
+        for (let i = 0; i < path.length - 2; i++) {
+          const link = linkDataArray.find(
+            (link) => link.from == path[i] && link.to == path[i + 1]
+          );
+          sum += link.length;
+        }
+        if (sum > highestSum) {
+          highestSum = sum;
+          indexOfHighestSum = j;
+        }
+      }
+    }
+    for (let j = 0; j < paths[indexOfHighestSum].length - 1; j++) {
+      const p = paths[indexOfHighestSum];
+      for (let i = 0; i < linkDataArray.length; i++) {
+        if (linkDataArray[i].from == p[j] && linkDataArray[i].to == p[j + 1]) {
+          linkDataArray[i].critical = true;
+          break;
+        }
+      }
+    }
+    setLinkDataArray([...linkDataArray]);
+  };
 
   const handleGenerateDiagram = () => {
     setSuccessorsAndPredecessors();
     calculateEarlyStart();
     calculateEarlyFinish();
+    findPaths(nodeDataArray[0]);
+    console.log(paths);
+    calculateCriticalPath();
     setShowDiagram(true); // Set state to show diagram
   };
 
