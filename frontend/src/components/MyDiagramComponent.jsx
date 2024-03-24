@@ -56,12 +56,6 @@ function initDiagram() {
         new go.Binding("text", "earlyStart"),
         { row: 0, column: 0, margin: 5, textAlign: "center" }
       ),
-      $(go.TextBlock, new go.Binding("text", "length"), {
-        row: 0,
-        column: 1,
-        margin: 5,
-        textAlign: "center",
-      }),
       $(
         go.TextBlock, // earlyFinish
         new go.Binding("text", "earlyFinish",),
@@ -88,6 +82,7 @@ function initDiagram() {
   function linkColorConverter(linkdata, elt) {
     var link = elt.part;
     if (!link) return blue;
+    if (link.ub.critical == null) return blue;
     if (link.ub.critical == false) return blue;
     return pink; // when both Link.fromNode.data.critical and Link.toNode.data.critical
   }

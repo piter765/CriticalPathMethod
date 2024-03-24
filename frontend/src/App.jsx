@@ -3,7 +3,7 @@
 import { Grid, GridRow, Button } from "semantic-ui-react";
 import CpmForm from "./components/CpmForm";
 import DataTable from "./components/DataTable";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MyDiagramComponent from "./components/MyDiagramComponent";
 
 let tableTest = [
@@ -144,6 +144,10 @@ function App() {
 
   const addRowToTable = (rowData) => {
     setTable([...table, rowData]);
+
+    // if (nodeDataArray.find(node => node.key == rowData.from) && nodeDataArray.find(node => node.key == rowData.to)) {
+    //   return;
+    // }
 
     setNodeDataArray((prevNodeDataArray) => [
       ...prevNodeDataArray,
@@ -309,7 +313,7 @@ function App() {
 
     //throw away paths that are shorter and the only ones left are potential critical paths
     paths = paths.filter((path) => path.length === longestPath);
-
+    console.log(paths, 'sciezki')
     let highestSum = 0,
       indexOfHighestSum = 0;
     if (paths.length !== 1) {
@@ -336,6 +340,7 @@ function App() {
         }
       }
     }
+    console.log(linkDataArray)
     setLinkDataArray([...linkDataArray]);
   };
 
