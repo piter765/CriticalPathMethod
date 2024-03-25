@@ -94,7 +94,7 @@ $(go.Link,
     { toArrow: "Triangle", stroke: null, scale: 1.5 },
     new go.Binding("fill", "", linkColorConverter)),
   $(go.TextBlock, // text value
-    { segmentIndex: -1, segmentOffset: new go.Point(0.5, -10), textAlign: "center", font: "bold 12px sans-serif" },
+    { segmentIndex: -1, segmentOffset: new go.Point(-20, -10), textAlign: "center", font: "bold 12px sans-serif" },
     new go.Binding("text", "", function(linkData) {
       var fromNode = myDiagram.findNodeForKey(linkData.from);
       var text = fromNode.data.text;
