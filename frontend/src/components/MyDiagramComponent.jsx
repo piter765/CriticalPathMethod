@@ -35,8 +35,8 @@ function initDiagram() {
       go.Shape,
       "Rectangle", // the border
       { fill: "white", strokeWidth: 2 },
-      new go.Binding("fill", "critical", (b) => (b ? pinkfill : bluefill)),
-      new go.Binding("stroke", "critical", (b) => (b ? pink : blue))
+      new go.Binding("fill", "critical", (b) => (bluefill)),
+      new go.Binding("stroke", "critical", (b) => (blue))
     ),
     $(
       go.Panel,
@@ -56,15 +56,9 @@ function initDiagram() {
         new go.Binding("text", "earlyStart"),
         { row: 0, column: 0, margin: 5, textAlign: "center" }
       ),
-      $(go.TextBlock, new go.Binding("text", "length"), {
-        row: 0,
-        column: 1,
-        margin: 5,
-        textAlign: "center",
-      }),
       $(
         go.TextBlock, // earlyFinish
-        new go.Binding("text", "", (d) => (d.earlyStart + d.length).toFixed(2)),
+        new go.Binding("text", "earlyFinish",),
         { row: 0, column: 2, margin: 5, textAlign: "center" }
       ),
 
@@ -78,48 +72,42 @@ function initDiagram() {
       }),
 
       $(
-        go.TextBlock, // lateStart
-        new go.Binding("text", "", (d) => (d.lateFinish - d.length).toFixed(2)),
-        { row: 2, column: 0, margin: 5, textAlign: "center" }
-      ),
-      $(
         go.TextBlock, // slack
-        new go.Binding("text", "", (d) =>
-          (d.lateFinish - (d.earlyStart + d.length)).toFixed(2)
-        ),
+        new go.Binding("text", "reserve"),
         { row: 2, column: 1, margin: 5, textAlign: "center" }
-      ),
-      $(
-        go.TextBlock, // lateFinish
-        new go.Binding("text", "lateFinish"),
-        { row: 2, column: 2, margin: 5, textAlign: "center" }
-      )
+      ),  
     ) // end Table Panel
   ); // end Node
 
   function linkColorConverter(linkdata, elt) {
     var link = elt.part;
     if (!link) return blue;
-    var f = link.fromNode;
-    if (!f || !f.data || !f.data.critical) return blue;
-    var t = link.toNode;
-    if (!t || !t.data || !t.data.critical) return blue;
+    if (link.ub.critical == null) return blue;
+    if (link.ub.critical == false) return blue;
     return pink; // when both Link.fromNode.data.critical and Link.toNode.data.critical
   }
 
-  diagram.linkTemplate = $(
-    go.Link,
+  diagram.linkTemplate =
+  $(go.Link,
     { toShortLength: 6, toEndSegmentLength: 20 },
-    $(
-      go.Shape,
+    $(go.Shape,
       { strokeWidth: 4 },
-      new go.Binding("stroke", "", linkColorConverter)
-    ),
-    $(
-      go.Shape, // arrowhead
+      new go.Binding("stroke", "", linkColorConverter)),
+    $(go.Shape,  // arrowhead
       { toArrow: "Triangle", stroke: null, scale: 1.5 },
-      new go.Binding("fill", "", linkColorConverter)
-    )
+      new go.Binding("fill", "", linkColorConverter)),
+    $(go.TextBlock, // text value
+      {
+        segmentOffset: new go.Point(0, -10), // Adjust segment offset to position the text above the arrow
+        segmentIndex: 0.5, // Set segment index to 0.5 to position the text in the middle
+        segmentFraction: 0.5, // Set segment fraction to 0.5 to position the text in the middle
+        textAlign: "center",
+        font: "bold 16px sans-serif"
+      },
+      new go.Binding("text", "", function(linkData) {
+
+        return linkData.name + " " + linkData.length;
+      }))
   );
 
   //legend
